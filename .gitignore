@@ -1,0 +1,11 @@
+venv/
+__pycache__/
+*.pyc
+*.pkl
+*.sav
+*.h5
+*.csv
+*.xlsx
+.streamlit/
+*.log
+.DS_Store
