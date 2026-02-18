@@ -12,158 +12,199 @@ from sklearn.metrics import accuracy_score, classification_report, confusion_mat
 import joblib
 from io import StringIO
 
-# --- 1. SET PAGE CONFIG (Must be first) ---
-st.set_page_config(page_title="ML Studio Pro", page_icon="🧪", layout="wide")
+# --- 1. PRO UI CONFIG ---
+st.set_page_config(page_title="Purple ML Studio", page_icon="🔮", layout="wide")
 
-# --- 2. THE "FORCE READABLE" CSS ---
+# --- 2. THE "DEEP PURPLE" NEOMORPHIC CSS ---
 st.markdown("""
     <style>
-    /* Force a clean background that works for both themes */
+    /* Main App Background - Deep Night Purple */
     .stApp {
-        background: linear-gradient(to bottom right, #eff6ff, #dbeafe);
-    }
-    
-    /* Make Title and Headers pop with deep blue contrast */
-    h1, h2, h3, .stMarkdown p {
-        color: #1e3a8a !important; 
-        font-family: 'Inter', sans-serif;
+        background: radial-gradient(circle at top left, #1a1a2e, #16213e, #0f3460);
+        color: #e94560;
     }
 
-    /* Style the Sidebar to be distinct */
+    /* Force all text to be visible (off-white/silver) */
+    h1, h2, h3, h4, p, span, label {
+        color: #e2e8f0 !important;
+    }
+
+    /* Sidebar - Solid Dark with Purple Border */
     section[data-testid="stSidebar"] {
-        background-color: #ffffff !important;
-        border-right: 2px solid #e2e8f0;
+        background-color: #0f3460 !important;
+        border-right: 2px solid #6c63ff;
     }
 
-    /* Style the Tabs for better visibility */
-    .stTabs [data-baseweb="tab-list"] {
-        background-color: white;
-        border-radius: 12px;
-        padding: 5px;
-        box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1);
-    }
-    
-    /* Improve File Uploader Visibility */
-    section[data-testid="stFileUploadDropzone"] {
-        background-color: white !important;
-        border: 2px dashed #3b82f6 !important;
+    /* Glassmorphism Cards */
+    div.stMetric, .stDataFrame, div[data-testid="column"] {
+        background: rgba(255, 255, 255, 0.05);
+        padding: 15px;
         border-radius: 15px;
+        border: 1px solid rgba(108, 99, 255, 0.3);
     }
 
-    /* Clean Card containers */
-    div[data-testid="stVerticalBlock"] > div.element-container {
-        background: transparent;
+    /* Tabs Styling - Purple Neon */
+    .stTabs [data-baseweb="tab-list"] {
+        gap: 8px;
+        background-color: transparent;
+    }
+    .stTabs [data-baseweb="tab"] {
+        height: 50px;
+        background-color: rgba(108, 99, 255, 0.1);
+        border-radius: 10px 10px 0 0;
+        color: white !important;
+        border: 1px solid rgba(108, 99, 255, 0.2);
+    }
+    .stTabs [aria-selected="true"] {
+        background-color: #6c63ff !important;
+        border: 1px solid #6c63ff !important;
+    }
+
+    /* Custom Button - Neon Glow */
+    div.stButton > button {
+        background: linear-gradient(45deg, #6c63ff, #e94560) !important;
+        color: white !important;
+        border: none !important;
+        font-weight: bold;
+        transition: 0.3s ease all;
+    }
+    div.stButton > button:hover {
+        transform: scale(1.05);
+        box-shadow: 0 0 15px #6c63ff;
     }
     </style>
     """, unsafe_allow_html=True)
 
-# --- 3. SIDEBAR ---
+# --- 3. SIDEBAR DASHBOARD ---
 with st.sidebar:
-    st.image("https://cdn-icons-png.flaticon.com/512/2103/2103807.png", width=80)
-    st.title("AutoML Studio")
+    st.markdown("<h1 style='text-align: center; color: #6c63ff !important;'>🔮 STUDIO</h1>", unsafe_allow_html=True)
+    st.image("https://cdn-icons-png.flaticon.com/512/8644/8644453.png", width=120)
     st.markdown("---")
-    st.write("🔧 **System Status:** Online")
-    st.info("Upload an Excel file to unlock the dashboard.")
+    st.markdown("### ⚡ System Status")
+    st.success("Core Engine: Active")
+    st.info("Mode: Professional Analysis")
 
-# --- 4. MAIN APP LOGIC ---
-st.title("🚀 ML Project Workflow")
-st.markdown("##### Upload your data to begin automated feature engineering and model training.")
+# --- 4. MAIN WORKFLOW ---
+st.title("🚀 Full ML Project Workflow")
+st.markdown("Transforming raw data into predictive intelligence.")
 
-uploaded_file = st.file_uploader("Drop your dataset here", type=["xlsx"])
+uploaded_file = st.file_uploader("📂 Upload Dataset (Excel)", type=["xlsx"])
 
 if uploaded_file is not None:
     df = pd.read_excel(uploaded_file)
     
-    # Dashboard Metrics
-    m1, m2, m3 = st.columns(3)
-    m1.metric("Total Records", df.shape[0])
-    m2.metric("Features", df.shape[1])
-    m3.metric("Missing Values", df.isna().sum().sum())
+    # NEON DASHBOARD METRICS
+    col1, col2, col3, col4 = st.columns(4)
+    with col1: st.metric("Samples", df.shape[0])
+    with col2: st.metric("Dimensions", df.shape[1])
+    with col3: st.metric("Missing", df.isna().sum().sum())
+    with col4: st.metric("Categorical", len(df.select_dtypes(include='object').columns))
 
-    tab1, tab2, tab3, tab4 = st.tabs(["📊 Data Analysis", "⚙️ Train Models", "📈 Performance", "💾 Export"])
+    tab1, tab2, tab3, tab4 = st.tabs(["🔍 EDA", "🧠 Training", "📊 Evaluation", "📦 Export"])
 
     # ----------------------- TAB 1: EDA -----------------------
     with tab1:
-        st.subheader("Dataset Overview")
-        st.dataframe(df.head(10), use_container_width=True)
+        st.header("Exploratory Data Analysis")
+        st.dataframe(df.head(), use_container_width=True)
+
+        c1, c2 = st.columns(2)
+        with c1:
+            st.markdown("#### Feature Statistics")
+            st.dataframe(df.describe(), use_container_width=True)
         
-        col_a, col_b = st.columns(2)
-        with col_a:
-            st.markdown("**Column Metadata**")
+        with c2:
+            st.markdown("#### Data Structure")
             buffer = StringIO()
             df.info(buf=buffer)
-            st.text(buffer.getvalue())
-        with col_b:
-            st.markdown("**Descriptive Statistics**")
-            st.dataframe(df.describe())
+            st.code(buffer.getvalue(), language="python")
 
+        # Visuals
         df_clean = df.dropna().copy()
         le = LabelEncoder()
         for col in df_clean.select_dtypes(include='object').columns:
-            if col != 'file':
-                df_clean[col] = le.fit_transform(df_clean[col])
+            if col != 'file': df_clean[col] = le.fit_transform(df_clean[col])
 
-        target_col = st.text_input("🎯 Identify Target Column:", key="eda_target")
+        target_col = st.text_input("🎯 Enter Target Column Name:", key="target_input")
         st.session_state['target_col'] = target_col
 
         if target_col and target_col in df_clean.columns:
             v1, v2 = st.columns(2)
             with v1:
-                fig, ax = plt.subplots()
-                sns.countplot(x=target_col, data=df_clean, palette="Blues")
+                st.markdown(f"**{target_col} Distribution**")
+                fig, ax = plt.subplots(facecolor='none')
+                sns.countplot(x=target_col, data=df_clean, palette="magma", ax=ax)
+                ax.set_title(f"Class Counts", color="white")
+                ax.tick_params(colors='white')
                 st.pyplot(fig)
             with v2:
-                fig, ax = plt.subplots()
-                numeric_cols = df_clean.select_dtypes(include=np.number).columns
-                sns.heatmap(df_clean[numeric_cols].corr(), cmap='RdBu', ax=ax)
+                st.markdown("**Correlation Matrix**")
+                fig, ax = plt.subplots(facecolor='none')
+                sns.heatmap(df_clean.select_dtypes(include=np.number).corr(), cmap='Purples', ax=ax)
+                ax.tick_params(colors='white')
                 st.pyplot(fig)
 
     # ----------------------- TAB 2: Training -----------------------
     with tab2:
-        if 'df_clean' in locals() and st.session_state.get('target_col'):
-            st.subheader("Model Pipeline")
+        st.header("Machine Learning Pipeline")
+        if st.session_state.get('target_col') in df_clean.columns:
             target = st.session_state['target_col']
-            
             X = df_clean.drop([target, 'file'], axis=1, errors='ignore')
             y = df_clean[target]
-            X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, stratify=y)
             
+            X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, stratify=y)
             scaler = StandardScaler()
             X_train_s = scaler.fit_transform(X_train)
             X_test_s = scaler.transform(X_test)
 
             models = {
-                'RandomForest': RandomForestClassifier(),
-                'SVM': SVC(probability=True),
-                'Logistic': LogisticRegression()
+                'Random Forest': RandomForestClassifier(n_estimators=100),
+                'SVM Classifier': SVC(probability=True),
+                'Log Regression': LogisticRegression()
             }
 
-            with st.status("Training Engines...", expanded=True):
-                for name, model in models.items():
-                    st.write(f"Processing {name}...")
-                    model.fit(X_train if name == 'RandomForest' else X_train_s, y_train)
-                st.success("Training Complete!")
+            if st.button("🔥 Start Neural Engine"):
+                with st.status("Training models...", expanded=True) as status:
+                    for name, model in models.items():
+                        st.write(f"Training {name}...")
+                        model.fit(X_train if 'Forest' in name else X_train_s, y_train)
+                    status.update(label="Training Sequence Complete!", state="complete")
+                    st.session_state['trained_models'] = models
         else:
-            st.warning("Please specify a Target Column in the Analysis tab.")
+            st.info("Please set the target column in the EDA tab.")
 
     # ----------------------- TAB 3: Evaluation -----------------------
     with tab3:
-        if 'models' in locals():
-            for name, model in models.items():
-                with st.expander(f"Report: {name}", expanded=(name=='RandomForest')):
-                    y_p = model.predict(X_test if name == 'RandomForest' else X_test_s)
-                    acc = accuracy_score(y_test, y_p)
-                    st.metric(f"{name} Accuracy", f"{acc:.2%}")
-                    st.code(classification_report(y_test, y_p))
+        st.header("Performance Analytics")
+        if 'trained_models' in st.session_state:
+            for name, model in st.session_state['trained_models'].items():
+                with st.expander(f"Analysis: {name}"):
+                    y_pred = model.predict(X_test if 'Forest' in name else X_test_s)
+                    acc = accuracy_score(y_test, y_pred)
+                    st.metric("Model Accuracy", f"{acc:.4f}")
+                    st.code(classification_report(y_test, y_pred))
+                    
+                    fig, ax = plt.subplots(figsize=(6,3), facecolor='none')
+                    sns.heatmap(confusion_matrix(y_test, y_pred), annot=True, fmt='d', cmap='PuRd', ax=ax)
+                    ax.tick_params(colors='white')
+                    st.pyplot(fig)
+        else:
+            st.warning("No models found. Please train models in the 'Training' tab.")
 
-    # ----------------------- TAB 4: Model Saving -----------------------
+    # ----------------------- TAB 4: Export -----------------------
     with tab4:
-        if 'models' in locals():
-            st.subheader("Model Serialization")
-            joblib.dump(models['RandomForest'], 'model.pkl')
+        st.header("Deployment Center")
+        if 'trained_models' in st.session_state:
+            st.success("Best model ready for deployment.")
+            joblib.dump(st.session_state['trained_models']['Random Forest'], 'model.pkl')
             with open("model.pkl", "rb") as f:
-                st.download_button("💾 Download .PKL File", f, "best_model.pkl")
+                st.download_button("📥 Download Pickle Model", f, "trained_model.pkl")
+        else:
+            st.info("Train your models to unlock the export options.")
 
 else:
-    st.empty()
-    st.info("Waiting for data upload...")
+    st.markdown("""
+        <div style='text-align: center; padding: 50px; border: 2px dashed #6c63ff; border-radius: 20px;'>
+            <h3>System Standby</h3>
+            <p>Please upload an Excel dataset to initialize the AI modules.</p>
+        </div>
+    """, unsafe_allow_html=True)
